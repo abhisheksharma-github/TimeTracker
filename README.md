@@ -265,20 +265,6 @@ GET /api/time-entries/monthly-summary?year=2026&month=8
 
 ---
 
-# 📸 Screenshots
-
-> Add screenshots after completing the UI.
-
-```
-screenshots/
-│
-├── Dashboard.png
-├── AddEntry.png
-├── MonthlySummary.png
-└── Analytics.png
-```
-
----
 
 # 🔮 Future Enhancements
 
@@ -331,9 +317,7 @@ git push origin feature/new-feature
 **Abhishek Sharma**
 
 Software Engineer
-
-- GitHub: https://github.com/YOUR_USERNAME
-- LinkedIn: https://linkedin.com/in/YOUR_PROFILE
+- LinkedIn: https://www.linkedin.com/in/abhishek-sharma-80423b235/
 
 ---
 

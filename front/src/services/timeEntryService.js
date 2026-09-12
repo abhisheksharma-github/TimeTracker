@@ -4,28 +4,7 @@ const LOCAL_STORAGE_KEY = "timetracker_offline_entries";
 const getLocalEntries = () => {
   try {
     const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return data ? JSON.parse(data) : [
-      {
-        id: 1,
-        workDate: "2026-08-01",
-        inTime: "09:00",
-        outTime: "18:00",
-        workedHours: "9.00",
-        shortHours: "0.00",
-        surplusHours: "0.33",
-        remarks: "TimeTracker backend architecture setup"
-      },
-      {
-        id: 2,
-        workDate: "2026-08-02",
-        inTime: "09:30",
-        outTime: "17:45",
-        workedHours: "8.25",
-        shortHours: "0.42",
-        surplusHours: "0.00",
-        remarks: "React frontend components and routing"
-      }
-    ];
+    return data ? JSON.parse(data) : [];
   } catch {
     return [];
   }

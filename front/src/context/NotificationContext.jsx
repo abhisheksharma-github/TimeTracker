@@ -6,16 +6,7 @@ export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState(() => {
     try {
       const saved = localStorage.getItem("timetracker_notifications");
-      return saved ? JSON.parse(saved) : [
-        {
-          id: "welcome-1",
-          title: "Welcome to TimeTracker",
-          message: "Track your work hours, monitor productivity, and export monthly timesheets effortlessly.",
-          type: "info",
-          timestamp: new Date().toISOString(),
-          read: false,
-        }
-      ];
+      return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
     }

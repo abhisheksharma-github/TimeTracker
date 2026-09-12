@@ -26,7 +26,7 @@ export function exportToCSV(entries = [], summary = null, month = "", year = "")
   csvRows.push([]); // blank separator line
 
   // Column Headers
-  const headers = ["ID", "Work Date", "Time In", "Time Out", "Worked Hours", "Short Hours", "Surplus Hours", "Remarks"];
+  const headers = ["ID", "Work Date", "Time In", "Time Out", "Worked Hours", "Short Hours", "Surplus Hours", "Remarks", "Recorded At"];
   csvRows.push(headers);
 
   // Rows
@@ -39,7 +39,8 @@ export function exportToCSV(entries = [], summary = null, month = "", year = "")
       entry.workedHours ?? "0.00",
       entry.shortHours ?? "0.00",
       entry.surplusHours ?? "0.00",
-      `"${(entry.remarks || "").replace(/"/g, '""')}"`
+      `"${(entry.remarks || "").replace(/"/g, '""')}"`,
+      entry.createdAt ? `"${new Date(entry.createdAt).toLocaleString()}"` : '""'
     ]);
   });
 

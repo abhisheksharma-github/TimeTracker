@@ -3,6 +3,7 @@ package com.example.timetracker.service.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,13 @@ public class TimeEntryServiceImpl implements TimeEntryService {
         entry.setRequiredHours(dto.getRequiredHours() != null ? dto.getRequiredHours() : BigDecimal.valueOf(8.67));
         entry.setRemarks(dto.getRemarks());
 
+        // Set device timestamp if provided by client, otherwise current timestamp
+        if (dto.getCreatedAt() != null) {
+            entry.setCreatedAt(dto.getCreatedAt());
+        } else {
+            entry.setCreatedAt(LocalDateTime.now());
+        }
+
         calculateHours(entry);
         TimeEntry saved = repository.save(entry);
 
@@ -45,7 +53,12 @@ public class TimeEntryServiceImpl implements TimeEntryService {
                 .stream()
                 .sorted((a, b) -> {
                     if (a.getWorkDate() == null || b.getWorkDate() == null) return 0;
-                    return b.getWorkDate().compareTo(a.getWorkDate());
+                    int dateComp = b.getWorkDate().compareTo(a.getWorkDate());
+                    if (dateComp != 0) return dateComp;
+                    if (a.getCreatedAt() != null && b.getCreatedAt() != null) {
+                        return b.getCreatedAt().compareTo(a.getCreatedAt());
+                    }
+                    return 0;
                 })
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());

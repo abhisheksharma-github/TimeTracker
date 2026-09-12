@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
 import { createTimeEntry } from "../services/timeEntryService";
-import { PlusCircle, AlertTriangle, Sparkles, Check, Clock } from "lucide-react";
+import { PlusCircle, AlertTriangle, Sparkles, Check, Clock, Laptop } from "lucide-react";
 import { useNotification } from "../context/NotificationContext";
 
 function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
   const { addNotification } = useNotification();
+  
+  // Live user device clock
+  const [deviceTime, setDeviceTime] = useState(() => new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDeviceTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const [form, setForm] = useState({
     workDate: new Date().toISOString().split("T")[0],
     inTime: "09:00",
@@ -86,16 +97,24 @@ function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
     setResult(null);
     setIsSubmitting(true);
 
+    // Capture exact current timestamp from the user's device
+    const clientTimestamp = new Date().toISOString();
+
+    const payload = {
+      ...form,
+      createdAt: clientTimestamp, // Device timestamp
+    };
+
     try {
-      const response = await createTimeEntry(form);
+      const response = await createTimeEntry(payload);
       setResult(response);
-      
+
       const isSurplus = parseFloat(response.surplusHours) > 0;
       const isShort = parseFloat(response.shortHours) > 0;
 
       addNotification({
         title: "Entry Logged Successfully",
-        message: `${form.workDate}: Logged ${response.workedHours} hrs (${
+        message: `${form.workDate}: Logged ${response.workedHours} hrs at ${new Date(clientTimestamp).toLocaleTimeString()} (${
           isSurplus ? `+${response.surplusHours} surplus` : isShort ? `-${response.shortHours} short` : "target met"
         })`,
         type: isShort ? "warning" : "success",
@@ -118,10 +137,22 @@ function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
   return (
     <div className="glass-card" style={{ marginBottom: "28px" }}>
       <div className="card-title-row">
-        <h2>
-          <Clock size={22} color="var(--primary-light)" />
-          Log Work Hours
-        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <h2>
+            <Clock size={22} color="var(--primary-light)" />
+            Log Work Hours
+          </h2>
+          {/* Live Device Clock Badge */}
+          <span
+            className="status-badge status-neutral"
+            style={{ fontSize: "0.8rem", display: "inline-flex", alignItems: "center", gap: "5px" }}
+            title="Current live clock from your local device"
+          >
+            <Laptop size={13} color="var(--primary-light)" />
+            Device Time: <strong className="mono-font">{deviceTime}</strong>
+          </span>
+        </div>
+
         {preview && (
           <span className="status-badge status-neutral" style={{ fontSize: "0.85rem" }}>
             Preview: <strong>{preview.worked}h</strong>

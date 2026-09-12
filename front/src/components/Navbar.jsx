@@ -54,25 +54,12 @@ function Navbar({ activeTimerSeconds, isTimerRunning, onTimerClick }) {
         {/* Live Current Device Clock Badge */}
         <div
           className="current-time-pill"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "var(--card-header-bg)",
-            border: "1px solid var(--border-light)",
-            padding: "6px 14px",
-            borderRadius: "20px",
-            fontSize: "0.85rem",
-            fontWeight: 600,
-            color: "var(--text-main)",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          }}
           title={`User Device Time: ${formattedDate} ${formattedTime}`}
         >
-          <Clock size={15} color="var(--primary-light)" />
-          <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>{formattedDate}</span>
-          <span style={{ color: "var(--border-light)" }}>|</span>
-          <span className="mono-font" style={{ color: "var(--primary-light)", letterSpacing: "0.5px" }}>
+          <Clock size={14} color="var(--primary-light)" />
+          <span className="nav-date-text" style={{ color: "var(--text-muted)" }}>{formattedDate}</span>
+          <span className="nav-date-separator" style={{ color: "var(--border-light)" }}>|</span>
+          <span className="mono-font nav-time-text" style={{ color: "var(--primary-light)", letterSpacing: "0.3px" }}>
             {formattedTime}
           </span>
         </div>

@@ -231,28 +231,28 @@ function LiveTimer({ onApplyToForm, activeSeconds, setActiveSeconds, isRunning, 
 
         <div className="timer-actions">
           {!isRunning ? (
-            <button className="btn btn-primary" onClick={handleStart}>
-              <Play size={18} />
-              Start
+            <button className="btn btn-primary btn-main-action" onClick={handleStart}>
+              <Play size={17} />
+              <span>Start</span>
             </button>
           ) : (
-            <button className="btn btn-secondary" onClick={handlePause}>
-              <Pause size={18} />
-              Pause
+            <button className="btn btn-secondary btn-main-action" onClick={handlePause}>
+              <Pause size={17} />
+              <span>Pause</span>
             </button>
           )}
 
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary btn-reset-action"
             onClick={handleReset}
             disabled={activeSeconds === 0 && !isRunning}
             title="Reset timer"
           >
-            <RotateCcw size={18} />
+            <RotateCcw size={17} />
           </button>
 
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-log-action"
             onClick={handleTransferToForm}
             disabled={
               timerMode === "countdown"
@@ -264,18 +264,18 @@ function LiveTimer({ onApplyToForm, activeSeconds, setActiveSeconds, isRunning, 
               boxShadow: "0 4px 14px var(--success-glow)",
             }}
           >
-            <ArrowRightCircle size={18} />
-            Log to Entry
+            <ArrowRightCircle size={17} />
+            <span>Log to Entry</span>
           </button>
         </div>
       </div>
 
       {/* Countdown Progress Bar (Visible in Countdown mode) */}
       {timerMode === "countdown" && totalDurationSeconds > 0 && (
-        <div style={{ marginTop: "14px" }}>
+        <div style={{ marginTop: "12px" }}>
           <div
             style={{
-              height: "6px",
+              height: "5px",
               background: "var(--card-header-bg)",
               borderRadius: "4px",
               overflow: "hidden",
@@ -295,31 +295,33 @@ function LiveTimer({ onApplyToForm, activeSeconds, setActiveSeconds, isRunning, 
       )}
 
       {/* Quick Backward Countdown Presets */}
-      <div style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-        <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>
-          ⏳ Quick Countdown Presets:
+      <div className="timer-presets-container">
+        <span className="timer-presets-label">
+          ⏳ Presets:
         </span>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => setCountdownPreset(25, "Pomodoro Focus Sprint (25m)")}
-        >
-          ⏱️ 25m Pomodoro
-        </button>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => setCountdownPreset(45, "Client Sync & Meeting (45m)")}
-        >
-          📅 45m Meeting
-        </button>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => setCountdownPreset(60, "Deep Architecture Coding (1h)")}
-        >
-          🚀 1h Deep Work
-        </button>
+        <div className="timer-presets-row">
+          <button
+            type="button"
+            className="preset-chip"
+            onClick={() => setCountdownPreset(25, "Pomodoro Focus Sprint (25m)")}
+          >
+            ⏱️ 25m Pomodoro
+          </button>
+          <button
+            type="button"
+            className="preset-chip"
+            onClick={() => setCountdownPreset(45, "Client Sync & Meeting (45m)")}
+          >
+            📅 45m Meeting
+          </button>
+          <button
+            type="button"
+            className="preset-chip"
+            onClick={() => setCountdownPreset(60, "Deep Architecture Coding (1h)")}
+          >
+            🚀 1h Deep Work
+          </button>
+        </div>
       </div>
     </div>
   );

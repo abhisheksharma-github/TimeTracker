@@ -177,73 +177,73 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- METRIC CARDS (Responsive: 1-col -> 2 -> 4) -->
+    <!-- METRIC CARDS (Responsive: 2x2 Mobile -> 4-col Desktop) -->
     <!-- ========================================== -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
       
       <!-- Card 1: Total Worked -->
-      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-brand-500/40 transition-all duration-300 shadow-md">
+      <div class="glass-panel p-3.5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-brand-500/40 transition-all duration-300 shadow-md">
         <div class="flex items-center justify-between">
           <span class="text-xs sm:text-sm font-medium text-slate-400">Total Worked</span>
-          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
-            <i data-lucide="briefcase" class="w-5 h-5"></i>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
+            <i data-lucide="briefcase" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
         </div>
-        <div class="mt-4">
-          <div id="metric-total-worked" class="text-2xl sm:text-3xl font-bold font-mono text-white">8 hr 40 min</div>
-          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-            <span class="text-emerald-400 font-semibold font-mono">8.67 hr</span> raw decimal converted
+        <div class="mt-3 sm:mt-4">
+          <div id="metric-total-worked" class="text-xl sm:text-3xl font-bold font-mono text-white">8 hr 40 min</div>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-emerald-400 font-semibold font-mono">8.67 hr</span> <span class="hidden sm:inline">raw decimal converted</span>
           </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
       </div>
 
       <!-- Card 2: Short Time (Under 60 min test case: 0.67 hr -> 40 min) -->
-      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-rose-500/40 transition-all duration-300 shadow-md">
+      <div class="glass-panel p-3.5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-rose-500/40 transition-all duration-300 shadow-md">
         <div class="flex items-center justify-between">
-          <span class="text-xs sm:text-sm font-medium text-slate-400">Short Duration (&lt;60m)</span>
-          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Short (&lt;60m)</span>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
         </div>
-        <div class="mt-4">
-          <div id="metric-short-time" class="text-2xl sm:text-3xl font-bold font-mono text-rose-400">40 min</div>
-          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-            <span class="text-rose-400 font-semibold font-mono">0.67 hr</span> strictly minutes rule
+        <div class="mt-3 sm:mt-4">
+          <div id="metric-short-time" class="text-xl sm:text-3xl font-bold font-mono text-rose-400">40 min</div>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-rose-400 font-semibold font-mono">0.67 hr</span> <span class="hidden sm:inline">minutes only rule</span>
           </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-red-600"></div>
       </div>
 
       <!-- Card 3: Overtime / Surplus (Combined hours & min: 1.67 hr -> 1 hr 40 min) -->
-      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300 shadow-md">
+      <div class="glass-panel p-3.5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300 shadow-md">
         <div class="flex items-center justify-between">
-          <span class="text-xs sm:text-sm font-medium text-slate-400">Surplus / Overtime</span>
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
-            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Overtime / Surplus</span>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
         </div>
-        <div class="mt-4">
-          <div id="metric-surplus-time" class="text-2xl sm:text-3xl font-bold font-mono text-emerald-400">1 hr 40 min</div>
-          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-            <span class="text-emerald-400 font-semibold font-mono">1.67 hr</span> combined hr + min rule
+        <div class="mt-3 sm:mt-4">
+          <div id="metric-surplus-time" class="text-xl sm:text-3xl font-bold font-mono text-emerald-400">1 hr 40 min</div>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-emerald-400 font-semibold font-mono">1.67 hr</span> <span class="hidden sm:inline">hr + min rule</span>
           </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
       </div>
 
       <!-- Card 4: Whole Hour Rule (1.0 hr -> 1 hr / 2.0 hr -> 2 hr) -->
-      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/40 transition-all duration-300 shadow-md">
+      <div class="glass-panel p-3.5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/40 transition-all duration-300 shadow-md">
         <div class="flex items-center justify-between">
-          <span class="text-xs sm:text-sm font-medium text-slate-400">Exact Whole Hours</span>
-          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center">
-            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Exact Whole</span>
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center">
+            <i data-lucide="check-circle-2" class="w-4 h-4 sm:w-5 sm:h-5"></i>
           </div>
         </div>
-        <div class="mt-4">
-          <div id="metric-exact-hour" class="text-2xl sm:text-3xl font-bold font-mono text-purple-300">1 hr</div>
-          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-            <span class="text-purple-400 font-semibold font-mono">1.0 hr</span> whole hours only rule
+        <div class="mt-3 sm:mt-4">
+          <div id="metric-exact-hour" class="text-xl sm:text-3xl font-bold font-mono text-purple-300">1 hr</div>
+          <p class="text-[11px] sm:text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-purple-400 font-semibold font-mono">1.0 hr</span> <span class="hidden sm:inline">whole hours rule</span>
           </p>
         </div>
         <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>

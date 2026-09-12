@@ -82,20 +82,20 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
     : 100;
 
   return (
-    <div className="glass-card" style={{ marginBottom: "28px" }}>
+    <div className="glass-card">
       {/* Month / Year Selector & Action Toolbar */}
       <div className="card-title-row no-print">
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
           <h2>
-            <Calendar size={22} color="var(--primary-light)" />
+            <Calendar size={20} color="var(--primary-light)" />
             Monthly Work Analytics
           </h2>
 
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div style={{ display: "flex", gap: "6px" }}>
             <select
               value={currentMonthIndex}
               onChange={(e) => setSelectedMonth?.(Number(e.target.value))}
-              style={{ width: "auto", padding: "8px 12px", fontSize: "0.88rem", fontWeight: 600 }}
+              style={{ width: "auto", minHeight: "38px", padding: "6px 10px", fontSize: "0.82rem", fontWeight: 600, borderRadius: "10px" }}
               aria-label="Select month"
             >
               {MONTHS.map((m, idx) => (
@@ -108,7 +108,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
             <select
               value={currentYearVal}
               onChange={(e) => setSelectedYear?.(Number(e.target.value))}
-              style={{ width: "auto", padding: "8px 12px", fontSize: "0.88rem", fontWeight: 600 }}
+              style={{ width: "auto", minHeight: "38px", padding: "6px 10px", fontSize: "0.82rem", fontWeight: 600, borderRadius: "10px" }}
               aria-label="Select year"
             >
               {[2024, 2025, 2026, 2027].map((yr) => (
@@ -120,23 +120,23 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           <button className="btn btn-secondary btn-sm" onClick={handleExportCSV} title="Export current view to CSV">
-            <Download size={16} />
-            Export CSV
+            <Download size={15} />
+            <span>Export CSV</span>
           </button>
           <button className="btn btn-secondary btn-sm" onClick={handlePrint} title="Print or Save as PDF Timesheet">
-            <Printer size={16} />
-            Print Timesheet
+            <Printer size={15} />
+            <span>Print Timesheet</span>
           </button>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards Grid (2x2 on Mobile, 4x1 on Desktop) */}
       <div className="dashboard-cards" style={{ marginBottom: 0 }}>
         <div className="metric-card blue">
           <div className="metric-icon-wrapper">
-            <Briefcase size={26} />
+            <Briefcase size={20} />
           </div>
           <div className="metric-content">
             <h3>Total Worked</h3>
@@ -146,7 +146,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
 
         <div className="metric-card red">
           <div className="metric-icon-wrapper">
-            <AlertCircle size={26} />
+            <AlertCircle size={20} />
           </div>
           <div className="metric-content">
             <h3>Total Short</h3>
@@ -156,7 +156,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
 
         <div className="metric-card green">
           <div className="metric-icon-wrapper">
-            <CheckCircle size={26} />
+            <CheckCircle size={20} />
           </div>
           <div className="metric-content">
             <h3>Total Surplus</h3>
@@ -166,7 +166,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
 
         <div className="metric-card purple">
           <div className="metric-icon-wrapper">
-            <TrendingUp size={26} />
+            <TrendingUp size={20} />
           </div>
           <div className="metric-content">
             <h3>Target Completion</h3>

@@ -135,26 +135,26 @@ function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
   };
 
   return (
-    <div className="glass-card" style={{ marginBottom: "28px" }}>
+    <div className="glass-card">
       <div className="card-title-row">
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
           <h2>
-            <Clock size={22} color="var(--primary-light)" />
+            <Clock size={20} color="var(--primary-light)" />
             Log Work Hours
           </h2>
           {/* Live Device Clock Badge */}
           <span
             className="status-badge status-neutral"
-            style={{ fontSize: "0.8rem", display: "inline-flex", alignItems: "center", gap: "5px" }}
+            style={{ fontSize: "0.75rem", display: "inline-flex", alignItems: "center", gap: "4px" }}
             title="Current live clock from your local device"
           >
-            <Laptop size={13} color="var(--primary-light)" />
-            Device Time: <strong className="mono-font">{deviceTime}</strong>
+            <Laptop size={12} color="var(--primary-light)" />
+            Device: <strong className="mono-font">{deviceTime}</strong>
           </span>
         </div>
 
         {preview && (
-          <span className="status-badge status-neutral" style={{ fontSize: "0.85rem" }}>
+          <span className="status-badge status-neutral" style={{ fontSize: "0.8rem" }}>
             Preview: <strong>{preview.worked}h</strong>
             {parseFloat(preview.surplus) > 0 && <span style={{ color: "var(--success)" }}> (+{preview.surplus}h)</span>}
             {parseFloat(preview.short) > 0 && <span style={{ color: "var(--error)" }}> (-{preview.short}h)</span>}
@@ -162,44 +162,46 @@ function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
         )}
       </div>
 
-      {/* Quick Shift Presets */}
-      <div className="preset-chips no-print">
-        <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: 600 }}>
+      {/* Quick Shift Presets Grid (2x2 on Mobile, 4x1 on Desktop) */}
+      <div className="no-print">
+        <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontWeight: 600 }}>
           Quick Shifts:
         </span>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => applyPreset("09:00", "18:00", "Regular Full Day Shift")}
-        >
-          ☀️ Standard 9:00 - 18:00
-        </button>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => applyPreset("09:00", "13:30", "Morning Half Day")}
-        >
-          🌅 Morning 9:00 - 13:30
-        </button>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => applyPreset("14:00", "19:00", "Afternoon Half Day")}
-        >
-          🌆 Afternoon 14:00 - 19:00
-        </button>
-        <button
-          type="button"
-          className="preset-chip"
-          onClick={() => applyPreset("09:00", "20:30", "Deep Work Sprint + Overtime")}
-        >
-          ⚡ Extended 9:00 - 20:30
-        </button>
+        <div className="preset-shifts-grid">
+          <button
+            type="button"
+            className="preset-chip-btn"
+            onClick={() => applyPreset("09:00", "18:00", "Regular Full Day Shift")}
+          >
+            ☀️ Standard 9-18
+          </button>
+          <button
+            type="button"
+            className="preset-chip-btn"
+            onClick={() => applyPreset("09:00", "13:30", "Morning Half Day")}
+          >
+            🌅 Morning 9-13:30
+          </button>
+          <button
+            type="button"
+            className="preset-chip-btn"
+            onClick={() => applyPreset("14:00", "19:00", "Afternoon Half Day")}
+          >
+            🌆 Afternoon 14-19
+          </button>
+          <button
+            type="button"
+            className="preset-chip-btn"
+            onClick={() => applyPreset("09:00", "20:30", "Deep Work Sprint + Overtime")}
+          >
+            ⚡ Extended 9-20:30
+          </button>
+        </div>
       </div>
 
       {error && (
         <div className="error" role="alert">
-          <AlertTriangle size={20} />
+          <AlertTriangle size={18} />
           <span>{error}</span>
         </div>
       )}
@@ -229,28 +231,31 @@ function TimeEntryForm({ onSuccess, prefillData, onClearPrefill }) {
           />
         </div>
 
-        <div className="input-group">
-          <label htmlFor="inTime">Time In</label>
-          <input
-            id="inTime"
-            type="time"
-            name="inTime"
-            value={form.inTime}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        {/* Time In & Time Out Side-by-Side */}
+        <div className="form-time-row">
+          <div className="input-group">
+            <label htmlFor="inTime">Time In</label>
+            <input
+              id="inTime"
+              type="time"
+              name="inTime"
+              value={form.inTime}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="input-group">
-          <label htmlFor="outTime">Time Out</label>
-          <input
-            id="outTime"
-            type="time"
-            name="outTime"
-            value={form.outTime}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <label htmlFor="outTime">Time Out</label>
+            <input
+              id="outTime"
+              type="time"
+              name="outTime"
+              value={form.outTime}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
         <div className="input-group form-row-full">

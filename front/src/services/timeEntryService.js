@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:8080/api/time-entries";
+// Configurable API URL for local development and Vercel/Render production
+const API_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || "http://localhost:8080/api/time-entries";
 const LOCAL_STORAGE_KEY = "timetracker_offline_entries";
 
 const getLocalEntries = () => {
@@ -35,9 +36,9 @@ export const createTimeEntry = async (data) => {
     return saved;
   } catch (err) {
     console.warn("Backend unavailable, using local calculation fallback:", err);
-    // Offline / Local fallback calculation
-    const [inH, inM] = data.inTime.split(":").map(Number);
-    const [outH, outM] = data.outTime.split(":").map(Number);
+    // Offline / Local fallback calculation with timestamp
+    const [inH, inM] = (data.inTime || "09:00").split(":").map(Number);
+    const [outH, outM] = (data.outTime || "18:00").split(":").map(Number);
     const diffMinutes = (outH * 60 + outM) - (inH * 60 + inM);
     const worked = (Math.max(0, diffMinutes) / 60).toFixed(2);
     const req = Number(data.requiredHours || 8.67);
@@ -52,6 +53,7 @@ export const createTimeEntry = async (data) => {
       shortHours: diff < 0 ? Math.abs(diff).toFixed(2) : "0.00",
       surplusHours: diff > 0 ? diff : "0.00",
       remarks: data.remarks || "",
+      createdAt: new Date().toISOString(),
     };
 
     const localList = getLocalEntries();

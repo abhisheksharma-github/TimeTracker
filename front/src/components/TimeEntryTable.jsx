@@ -57,6 +57,17 @@ function TimeEntryTable({ entries, onDeleteSuccess }) {
     }
   };
 
+  const formatTimestamp = (ts) => {
+    if (!ts) return "—";
+    try {
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return ts;
+      return d.toLocaleDateString([], { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return ts;
+    }
+  };
+
   return (
     <div className="glass-card">
       <div className="card-title-row">
@@ -126,13 +137,14 @@ function TimeEntryTable({ entries, onDeleteSuccess }) {
           <table>
             <thead>
               <tr>
-                <th>Date</th>
+                <th>Work Date</th>
                 <th>In Time</th>
                 <th>Out Time</th>
                 <th>Worked</th>
                 <th>Short</th>
                 <th>Surplus</th>
                 <th>Remarks / Notes</th>
+                <th>Recorded At</th>
                 <th className="no-print" style={{ textAlign: "center" }}>Actions</th>
               </tr>
             </thead>
@@ -164,8 +176,11 @@ function TimeEntryTable({ entries, onDeleteSuccess }) {
                         {e.surplusHours}
                       </span>
                     </td>
-                    <td style={{ color: "var(--text-secondary)", fontSize: "0.88rem", maxWidth: "240px" }}>
+                    <td style={{ color: "var(--text-secondary)", fontSize: "0.88rem", maxWidth: "200px" }}>
                       {e.remarks || <span style={{ color: "var(--text-dim)" }}>—</span>}
+                    </td>
+                    <td style={{ fontSize: "0.82rem", color: "var(--text-dim)", whiteSpace: "nowrap" }}>
+                      {formatTimestamp(e.createdAt)}
                     </td>
                     <td className="no-print" style={{ textAlign: "center" }}>
                       <button

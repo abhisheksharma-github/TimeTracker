@@ -13,4 +13,5 @@ public class TimeEntryRequestDTO {
     private LocalTime inTime;
     private LocalTime outTime;
     private BigDecimal requiredHours;
+    private String remarks;
 }

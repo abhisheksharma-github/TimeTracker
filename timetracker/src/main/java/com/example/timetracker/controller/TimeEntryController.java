@@ -2,9 +2,13 @@ package com.example.timetracker.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,36 +20,49 @@ import com.example.timetracker.dto.TimeEntryResponseDTO;
 import com.example.timetracker.service.TimeEntryService;
 
 @RestController
-@RequestMapping("/api/time-entries") // base url -> here we see the data 
-@CrossOrigin(origins = "http://localhost:5173") // frontend of this project
+@RequestMapping("/api/time-entries")
+@CrossOrigin(origins = "*") // Allows local dev and deployed Vercel frontend
 public class TimeEntryController {
 
-    private final TimeEntryService service; // here we are accessing the Service File, final is used for used only once , can't change in it 
+    private final TimeEntryService service;
 
-    public TimeEntryController(TimeEntryService service) { // here Service are been accesses without writting there logic here
-        this.service = service; /*Take the service object given by Spring
-                                  and store it inside this controller*/
+    public TimeEntryController(TimeEntryService service) {
+        this.service = service;
     }
 
     // ---------------- CREATE ----------------
-    @PostMapping 
-    public TimeEntryResponseDTO create(
-            @RequestBody TimeEntryRequestDTO dto) { // here we used Request_Body to convert json into java obj
-        return (TimeEntryResponseDTO) service.createEntry(dto);
+    @PostMapping
+    public ResponseEntity<TimeEntryResponseDTO> create(@RequestBody TimeEntryRequestDTO dto) {
+        TimeEntryResponseDTO response = service.createEntry(dto);
+        return ResponseEntity.ok(response);
     }
 
     // ---------------- READ ALL ----------------
     @GetMapping
-    public List<TimeEntryResponseDTO> getAll() {
-        return service.getAllEntries();
+    public ResponseEntity<List<TimeEntryResponseDTO>> getAll() {
+        return ResponseEntity.ok(service.getAllEntries());
+    }
+
+    // ---------------- UPDATE ----------------
+    @PutMapping("/{id}")
+    public ResponseEntity<TimeEntryResponseDTO> update(
+            @PathVariable Long id,
+            @RequestBody TimeEntryRequestDTO dto) {
+        return ResponseEntity.ok(service.updateEntry(id, dto));
+    }
+
+    // ---------------- DELETE ----------------
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.deleteEntry(id);
+        return ResponseEntity.noContent().build();
     }
 
     // ---------------- MONTHLY SUMMARY ----------------
     @GetMapping("/monthly-summary")
-    public MonthlySummaryDTO getMonthlySummary(
+    public ResponseEntity<MonthlySummaryDTO> getMonthlySummary(
             @RequestParam int year,
             @RequestParam int month) {
-
-        return service.getMonthlySummary(year, month);
+        return ResponseEntity.ok(service.getMonthlySummary(year, month));
     }
 }

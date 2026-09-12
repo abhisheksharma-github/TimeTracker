@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TimeTracker — Modern Tailwind Dashboard & Duration Formatter</title>
+  
+  <!-- Tailwind CSS via CDN with Typography & Forms plugins -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            },
+            dark: {
+              bg: '#090d16',
+              surface: '#111827',
+              card: 'rgba(17, 24, 39, 0.75)',
+              border: 'rgba(255, 255, 255, 0.08)',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Glassmorphism custom utilities */
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .light .glass-panel {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    /* Minimum touch target for accessibility */
+    .touch-target {
+      min-height: 48px;
+      min-width: 48px;
+    }
+  </style>
+</head>
+
+<body class="bg-[#090d16] text-slate-100 min-h-screen font-sans antialiased transition-colors duration-200">
+
+  <!-- ========================================== -->
+  <!-- NAVIGATION BAR (Responsive: Mobile to 4K)  -->
+  <!-- ========================================== -->
+  <nav class="sticky top-0 z-50 glass-panel border-b border-white/10 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30 flex-shrink-0">
+            <i data-lucide="clock" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              TimeTracker
+              <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">Tailwind Pro</span>
+            </span>
+            <p class="text-xs text-slate-400 hidden sm:block">Work Logging & Duration Formatter</p>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Links (Hidden on mobile <768px) -->
+        <div class="hidden md:flex items-center gap-1 lg:gap-2">
+          <a href="#dashboard" class="px-4 py-2 rounded-xl text-sm font-medium text-white bg-brand-600/20 text-brand-400 border border-brand-500/30 transition">
+            Dashboard
+          </a>
+          <a href="#formatter-demo" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition">
+            Duration Engine
+          </a>
+          <a href="#timesheet-table" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition">
+            Timesheet Logs
+          </a>
+        </div>
+
+        <!-- Right Action Items: Device Clock & Theme Toggle & Mobile Hamburger -->
+        <div class="flex items-center gap-2 sm:gap-4">
+          
+          <!-- Live Device Clock Badge -->
+          <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-white/10 text-xs text-slate-300">
+            <i data-lucide="laptop" class="w-3.5 h-3.5 text-brand-400"></i>
+            <span class="text-slate-400">Device:</span>
+            <span id="nav-device-clock" class="font-mono font-semibold text-brand-300">--:--:--</span>
+          </div>
+
+          <!-- Dark/Light Theme Toggle -->
+          <button id="theme-toggle" class="touch-target p-2.5 rounded-xl bg-slate-800/80 border border-white/10 text-slate-300 hover:text-white hover:border-brand-500/50 transition flex items-center justify-center" aria-label="Toggle Theme">
+            <i id="theme-icon" data-lucide="sun" class="w-5 h-5 text-amber-400"></i>
+          </button>
+
+          <!-- Mobile Hamburger Button (Visible only on <768px) -->
+          <button id="mobile-menu-btn" class="touch-target md:hidden p-2.5 rounded-xl bg-slate-800/80 border border-white/10 text-slate-300 hover:text-white transition flex items-center justify-center" aria-label="Open Menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 border-t border-white/10 bg-slate-900/95 backdrop-blur-xl">
+      <a href="#dashboard" class="block px-4 py-3 rounded-xl text-base font-medium text-brand-400 bg-brand-500/10 border border-brand-500/20">
+        Dashboard
+      </a>
+      <a href="#formatter-demo" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:bg-white/5">
+        Duration Engine
+      </a>
+      <a href="#timesheet-table" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:bg-white/5">
+        Timesheet Logs
+      </a>
+      <div class="pt-2 flex items-center gap-2 px-2 text-xs text-slate-400">
+        <i data-lucide="laptop" class="w-4 h-4 text-brand-400"></i>
+        <span>Device Time: <span id="mobile-device-clock" class="font-mono font-semibold text-brand-300"></span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- MAIN CONTAINER (max-w-7xl, mx-auto, fluid) -->
+  <!-- ========================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8" id="dashboard">
+    
+    <!-- Hero / Title Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
+      <div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+          Productivity & Duration Overview
+        </h1>
+        <p class="text-sm sm:text-base text-slate-400 mt-1">
+          Human-readable duration formatting logic replacing raw decimals across all shift cards.
+        </p>
+      </div>
+
+      <!-- Quick Action Presets -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs text-slate-400 font-medium mr-1 hidden lg:inline">Quick Test:</span>
+        <button onclick="applyInteractiveValue(0.67, 'Sprint Short Session')" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 transition">
+          0.67 hr (40m)
+        </button>
+        <button onclick="applyInteractiveValue(1.0, 'One Hour Sync')" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 transition">
+          1.0 hr (1h)
+        </button>
+        <button onclick="applyInteractiveValue(1.67, 'Overtime Sprint')" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 transition">
+          1.67 hr (1h 40m)
+        </button>
+        <button onclick="applyInteractiveValue(2.25, 'Deep Feature Work')" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-brand-600/30 text-brand-300 border border-brand-500/30 transition">
+          2.25 hr (2h 15m)
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- METRIC CARDS (Responsive: 1-col -> 2 -> 4) -->
+    <!-- ========================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      
+      <!-- Card 1: Total Worked -->
+      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-brand-500/40 transition-all duration-300 shadow-md">
+        <div class="flex items-center justify-between">
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Total Worked</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
+            <i data-lucide="briefcase" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div id="metric-total-worked" class="text-2xl sm:text-3xl font-bold font-mono text-white">8 hr 40 min</div>
+          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-emerald-400 font-semibold font-mono">8.67 hr</span> raw decimal converted
+          </p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+      </div>
+
+      <!-- Card 2: Short Time (Under 60 min test case: 0.67 hr -> 40 min) -->
+      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-rose-500/40 transition-all duration-300 shadow-md">
+        <div class="flex items-center justify-between">
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Short Duration (&lt;60m)</span>
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div id="metric-short-time" class="text-2xl sm:text-3xl font-bold font-mono text-rose-400">40 min</div>
+          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-rose-400 font-semibold font-mono">0.67 hr</span> strictly minutes rule
+          </p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-red-600"></div>
+      </div>
+
+      <!-- Card 3: Overtime / Surplus (Combined hours & min: 1.67 hr -> 1 hr 40 min) -->
+      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/40 transition-all duration-300 shadow-md">
+        <div class="flex items-center justify-between">
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Surplus / Overtime</span>
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div id="metric-surplus-time" class="text-2xl sm:text-3xl font-bold font-mono text-emerald-400">1 hr 40 min</div>
+          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-emerald-400 font-semibold font-mono">1.67 hr</span> combined hr + min rule
+          </p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+      </div>
+
+      <!-- Card 4: Whole Hour Rule (1.0 hr -> 1 hr / 2.0 hr -> 2 hr) -->
+      <div class="glass-panel p-5 sm:p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/40 transition-all duration-300 shadow-md">
+        <div class="flex items-center justify-between">
+          <span class="text-xs sm:text-sm font-medium text-slate-400">Exact Whole Hours</span>
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div id="metric-exact-hour" class="text-2xl sm:text-3xl font-bold font-mono text-purple-300">1 hr</div>
+          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+            <span class="text-purple-400 font-semibold font-mono">1.0 hr</span> whole hours only rule
+          </p>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- INTERACTIVE FORMATTER ENGINE & LIVE TESTER -->
+    <!-- ========================================== -->
+    <section class="glass-panel p-6 sm:p-8 rounded-3xl" id="formatter-demo">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2 text-brand-400 text-xs font-semibold uppercase tracking-wider">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            Live Formatting Engine Test
+          </div>
+          <h2 class="text-xl sm:text-2xl font-bold text-white mt-1">Interactive Decimal to Human Duration Converter</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Test any decimal hour value below to verify instant adherence to the 4 strict UI formatting rules.
+          </p>
+        </div>
+
+        <!-- Rule Badges -->
+        <div class="flex flex-wrap gap-2 text-xs font-mono">
+          <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-white/10">&lt;60m: 40 min</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-white/10">=60m: 1 hr</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-white/10">Whole: 2 hr</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-white/10">Mixed: 1 hr 40 min</span>
+        </div>
+      </div>
+
+      <!-- Live Input and Output Card -->
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        
+        <!-- Input Form -->
+        <div class="space-y-4">
+          <label for="decimal-input" class="block text-sm font-semibold text-slate-300">
+            Enter Decimal Hours (e.g. 0.67, 1.0, 1.67, 2.25, 0.0):
+          </label>
+          <div class="relative">
+            <input 
+              id="decimal-input" 
+              type="number" 
+              step="0.01" 
+              value="1.67" 
+              class="touch-target w-full bg-slate-900 border border-white/15 rounded-xl px-4 py-3.5 text-white font-mono text-lg focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition"
+              placeholder="e.g. 1.67"
+              oninput="handleLiveConvert(this.value)"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-mono text-sm">hr</span>
+          </div>
+
+          <!-- Quick Preset Buttons -->
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="setInputValue(0.0)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">0.0 hr</button>
+            <button onclick="setInputValue(0.5)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">0.5 hr (30m)</button>
+            <button onclick="setInputValue(0.67)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">0.67 hr (40m)</button>
+            <button onclick="setInputValue(1.0)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">1.0 hr (1h)</button>
+            <button onclick="setInputValue(1.67)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">1.67 hr (1h 40m)</button>
+            <button onclick="setInputValue(2.25)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">2.25 hr (2h 15m)</button>
+            <button onclick="setInputValue(3.0)" class="px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 transition">3.0 hr (3h)</button>
+          </div>
+        </div>
+
+        <!-- Output Display Panel -->
+        <div class="glass-panel p-6 rounded-2xl border border-brand-500/30 bg-gradient-to-br from-brand-950/40 via-slate-900/80 to-slate-900 flex flex-col justify-center items-center text-center">
+          <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Formatted Output String:</span>
+          <div id="live-formatted-output" class="text-3xl sm:text-4xl font-extrabold font-mono text-brand-300 mt-2 tracking-tight">
+            1 hr 40 min
+          </div>
+          <div id="live-rule-explanation" class="text-xs text-slate-400 mt-2 font-mono px-3 py-1 rounded-full bg-slate-800/80 border border-white/10">
+            Rule Applied: More than 60 min with remainder
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- INTERACTIVE MOCK DATA TIMESHEET TABLE      -->
+    <!-- ========================================== -->
+    <section class="glass-panel p-6 sm:p-8 rounded-3xl" id="timesheet-table">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="file-spreadsheet" class="w-6 h-6 text-brand-400"></i>
+            Interactive Timesheet Logs (Mock Data Suite)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Comparing raw decimal outputs with clean human-readable duration strings.
+          </p>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="flex gap-2">
+          <button onclick="filterTable('all')" id="filter-all" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white transition">All Logs</button>
+          <button onclick="filterTable('short')" id="filter-short" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white transition">Short Only</button>
+          <button onclick="filterTable('surplus')" id="filter-surplus" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white transition">Surplus Only</button>
+        </div>
+      </div>
+
+      <!-- Responsive Table with Overflow Scrolling -->
+      <div class="mt-6 overflow-x-auto rounded-2xl border border-white/10">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900/80 text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-white/10">
+              <th class="py-4 px-4 sm:px-6">Shift / Task</th>
+              <th class="py-4 px-4 sm:px-6">Work Date</th>
+              <th class="py-4 px-4 sm:px-6">Raw Decimal</th>
+              <th class="py-4 px-4 sm:px-6">Human-Readable Duration</th>
+              <th class="py-4 px-4 sm:px-6">Status Badge</th>
+              <th class="py-4 px-4 sm:px-6">Recorded At</th>
+            </tr>
+          </thead>
+          <tbody id="timesheet-rows" class="divide-y divide-white/5 text-sm text-slate-200">
+            <!-- Dynamically rendered rows from JavaScript mock data array -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- TOAST NOTIFICATION CONTAINER               -->
+  <!-- ========================================== -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glass-panel px-4 py-3 rounded-xl shadow-2xl border border-brand-500/40 flex items-center gap-3 bg-slate-900/95 text-sm font-medium text-white">
+      <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+      <span id="toast-message">Action successful</span>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: DURATION LOGIC & INTERACTIVITY -->
+  <!-- ========================================== -->
+  <script>
+    /**
+     * Part 1: Core Time Formatting Function following strict UI display rules
+     * @param {number|string} decimalHours
+     * @returns {string}
+     */
+    function formatTimeDuration(decimalHours) {
+      const num = parseFloat(decimalHours);
+      if (isNaN(num) || num <= 0) return "0 min";
+      
+      // Convert total decimal hours to total rounded minutes
+      const totalMinutes = Math.round(num * 60);
+      
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      
+      if (hours === 0) {
+        return `${minutes} min`;
+      } else if (minutes === 0) {
+        return `${hours} hr`;
+      } else {
+        return `${hours} hr ${minutes} min`;
+      }
+    }
+
+    /**
+     * Part 2: Interactive Mock Data Array with test values: 0.67, 1.0, 1.67, 2.25, 0.0
+     */
+    const mockShifts = [
+      {
+        id: 1,
+        title: "Sprint Planning & Backlog Grooming",
+        workDate: "2026-09-12",
+        rawDecimal: 0.67,
+        type: "short",
+        createdAt: "2026-09-12T09:40:00Z"
+      },
+      {
+        id: 2,
+        title: "Client Weekly Architecture Sync",
+        workDate: "2026-09-12",
+        rawDecimal: 1.0,
+        type: "exact",
+        createdAt: "2026-09-12T11:00:00Z"
+      },
+      {
+        id: 3,
+        title: "Spring Boot REST API Overtime Work",
+        workDate: "2026-09-12",
+        rawDecimal: 1.67,
+        type: "surplus",
+        createdAt: "2026-09-12T16:40:00Z"
+      },
+      {
+        id: 4,
+        title: "Database Indexing & Neon PostgreSQL Migration",
+        workDate: "2026-09-11",
+        rawDecimal: 2.25,
+        type: "surplus",
+        createdAt: "2026-09-11T14:15:00Z"
+      },
+      {
+        id: 5,
+        title: "Zero Deviation Standup Check-in",
+        workDate: "2026-09-11",
+        rawDecimal: 0.0,
+        type: "neutral",
+        createdAt: "2026-09-11T09:00:00Z"
+      },
+      {
+        id: 6,
+        title: "Full Day Development Sprint",
+        workDate: "2026-09-10",
+        rawDecimal: 8.67,
+        type: "surplus",
+        createdAt: "2026-09-10T18:40:00Z"
+      }
+    ];
+
+    // Render Table Rows
+    function renderTable(filter = 'all') {
+      const tbody = document.getElementById('timesheet-rows');
+      tbody.innerHTML = '';
+
+      const filtered = mockShifts.filter(s => {
+        if (filter === 'short') return s.type === 'short';
+        if (filter === 'surplus') return s.type === 'surplus';
+        return true;
+      });
+
+      filtered.forEach(shift => {
+        const formatted = formatTimeDuration(shift.rawDecimal);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/[0.03] transition-colors";
+
+        let badgeClass = "bg-slate-800 text-slate-300 border-white/10";
+        let statusText = "Standard";
+        if (shift.type === 'short') {
+          badgeClass = "bg-rose-500/15 text-rose-400 border-rose-500/30";
+          statusText = "Short Time";
+        } else if (shift.type === 'surplus') {
+          badgeClass = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+          statusText = "Surplus / Overtime";
+        } else if (shift.type === 'exact') {
+          badgeClass = "bg-purple-500/15 text-purple-300 border-purple-500/30";
+          statusText = "Exact 1 Hour";
+        }
+
+        tr.innerHTML = `
+          <td class="py-4 px-4 sm:px-6 font-semibold text-white">${shift.title}</td>
+          <td class="py-4 px-4 sm:px-6 text-slate-400 font-mono text-xs">${shift.workDate}</td>
+          <td class="py-4 px-4 sm:px-6 font-mono text-slate-400">${shift.rawDecimal.toFixed(2)} hr</td>
+          <td class="py-4 px-4 sm:px-6 font-mono font-bold text-brand-300 text-base">${formatted}</td>
+          <td class="py-4 px-4 sm:px-6">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
+              ${statusText}
+            </span>
+          </td>
+          <td class="py-4 px-4 sm:px-6 text-slate-400 text-xs font-mono">
+            ${new Date(shift.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    function filterTable(type) {
+      ['all', 'short', 'surplus'].forEach(t => {
+        const btn = document.getElementById(`filter-${t}`);
+        if (btn) {
+          if (t === type) {
+            btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white transition";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-slate-300 hover:text-white transition";
+          }
+        }
+      });
+      renderTable(type);
+    }
+
+    // Live Conversion Engine Handlers
+    function handleLiveConvert(val) {
+      const num = parseFloat(val);
+      const outputEl = document.getElementById('live-formatted-output');
+      const ruleEl = document.getElementById('live-rule-explanation');
+
+      if (isNaN(num) || num <= 0) {
+        outputEl.textContent = "0 min";
+        ruleEl.textContent = "Rule: Zero or negative values return '0 min'";
+        return;
+      }
+
+      const formatted = formatTimeDuration(num);
+      outputEl.textContent = formatted;
+
+      const totalMinutes = Math.round(num * 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+
+      if (hours === 0) {
+        ruleEl.textContent = `Rule: Less than 60m (${totalMinutes}m) -> Displayed strictly as '${minutes} min'`;
+      } else if (minutes === 0) {
+        ruleEl.textContent = `Rule: Exact whole hours (${hours}h 0m) -> Displayed as '${hours} hr'`;
+      } else {
+        ruleEl.textContent = `Rule: More than 60m with remainder (${hours}h ${minutes}m) -> Displayed as '${hours} hr ${minutes} min'`;
+      }
+    }
+
+    function setInputValue(val) {
+      const input = document.getElementById('decimal-input');
+      input.value = val;
+      handleLiveConvert(val);
+      showToast(`Tested: ${val} hr -> ${formatTimeDuration(val)}`);
+    }
+
+    function applyInteractiveValue(val, label) {
+      setInputValue(val);
+      const targetEl = document.getElementById('formatter-demo');
+      if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Toast Trigger
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-message');
+      msgEl.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    // Device Clock Ticker
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString();
+      const navClock = document.getElementById('nav-device-clock');
+      const mobClock = document.getElementById('mobile-device-clock');
+      if (navClock) navClock.textContent = timeStr;
+      if (mobClock) mobClock.textContent = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Dark / Light Mode Switcher
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      document.documentElement.classList.toggle('light');
+      const isDark = document.documentElement.classList.contains('dark');
+      const icon = document.getElementById('theme-icon');
+      if (isDark) {
+        icon.setAttribute('data-lucide', 'sun');
+        icon.className = 'w-5 h-5 text-amber-400';
+      } else {
+        icon.setAttribute('data-lucide', 'moon');
+        icon.className = 'w-5 h-5 text-brand-600';
+      }
+      lucide.createIcons();
+    });
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTable();
+      handleLiveConvert(1.67);
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

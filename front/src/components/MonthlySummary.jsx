@@ -3,6 +3,7 @@ import axios from "axios";
 import { Briefcase, AlertCircle, CheckCircle, TrendingUp, Download, Printer, Calendar } from "lucide-react";
 import { exportToCSV, triggerPrint } from "../utils/exportUtils";
 import { useNotification } from "../context/NotificationContext";
+import { formatMinutes } from "../utils/timeFormatUtils";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -54,13 +55,6 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
         setLoading(false);
       });
   }, [refreshKey, currentMonthIndex, currentYearVal, entries]);
-
-  const format = (m) => {
-    if (m === undefined || m === null) return "0h 0m";
-    const hrs = Math.floor(m / 60);
-    const mins = Math.abs(m % 60);
-    return `${hrs}h ${mins}m`;
-  };
 
   const handleExportCSV = () => {
     const monthPrefix = `${currentYearVal}-${String(currentMonthIndex).padStart(2, '0')}`;
@@ -146,7 +140,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
           </div>
           <div className="metric-content">
             <h3>Total Worked</h3>
-            <p>{format(summary?.totalWorkedMinutes)}</p>
+            <p>{formatMinutes(summary?.totalWorkedMinutes)}</p>
           </div>
         </div>
 
@@ -156,7 +150,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
           </div>
           <div className="metric-content">
             <h3>Total Short</h3>
-            <p>{format(summary?.totalShortMinutes)}</p>
+            <p>{formatMinutes(summary?.totalShortMinutes)}</p>
           </div>
         </div>
 
@@ -166,7 +160,7 @@ function MonthlySummary({ refreshKey, entries = [], selectedMonth, setSelectedMo
           </div>
           <div className="metric-content">
             <h3>Total Surplus</h3>
-            <p>{format(summary?.totalSurplusMinutes)}</p>
+            <p>{formatMinutes(summary?.totalSurplusMinutes)}</p>
           </div>
         </div>
 

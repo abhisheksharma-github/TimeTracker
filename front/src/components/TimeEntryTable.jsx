@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Search, Trash2, Calendar, FileSpreadsheet, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import { deleteEntry } from "../services/timeEntryService";
 import { useNotification } from "../context/NotificationContext";
+import { formatTimeDuration } from "../utils/timeFormatUtils";
 
 function TimeEntryTable({ entries, onDeleteSuccess }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -162,18 +163,18 @@ function TimeEntryTable({ entries, onDeleteSuccess }) {
                     <td className="mono-font">{e.inTime}</td>
                     <td className="mono-font">{e.outTime}</td>
                     <td className="mono-font" style={{ fontWeight: 700 }}>
-                      {e.workedHours} hrs
+                      {formatTimeDuration(e.workedHours)}
                     </td>
                     <td>
                       <span className={`status-badge ${hasShort ? "status-short" : "status-neutral"}`}>
                         {hasShort && <AlertCircle size={12} />}
-                        {e.shortHours}
+                        {formatTimeDuration(e.shortHours)}
                       </span>
                     </td>
                     <td>
                       <span className={`status-badge ${hasSurplus ? "status-surplus" : "status-neutral"}`}>
                         {hasSurplus && <CheckCircle size={12} />}
-                        {e.surplusHours}
+                        {formatTimeDuration(e.surplusHours)}
                       </span>
                     </td>
                     <td style={{ color: "var(--text-secondary)", fontSize: "0.88rem", maxWidth: "200px" }}>
